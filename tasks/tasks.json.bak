@@ -1,0 +1,240 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Set up React Frontend Project",
+      "description": "Initialize a new React project and create the basic structure for the chat application frontend.",
+      "status": "done",
+      "dependencies": [],
+      "priority": "high",
+      "details": "Create a new React project using Create React App or Vite. Set up the project structure with folders for components, services, and styles. Install necessary dependencies including a library for handling streaming responses (e.g., SSE or WebSockets). Create a basic layout with a header and main content area for the chat interface.",
+      "testStrategy": "Verify that the React application builds and runs without errors. Ensure the project structure follows best practices and the basic layout renders correctly.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Initialize React project and install dependencies",
+          "description": "Set up a new React project using Vite and install all necessary dependencies for the chat application",
+          "dependencies": [],
+          "details": "1. Install Node.js and npm if not already installed\n2. Create a new React project using Vite: `npm create vite@latest chat-app -- --template react`\n3. Navigate to the project directory: `cd chat-app`\n4. Install core dependencies: `npm install`\n5. Install additional required packages:\n   - `npm install socket.io-client` for WebSocket communication\n   - `npm install axios` for HTTP requests\n   - `npm install react-router-dom` for routing\n   - `npm install styled-components` for styling\n6. Create a `.env` file for environment variables\n7. Update the README.md with project setup instructions\n8. Test the installation by running `npm run dev` and verifying the default Vite React page loads correctly",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 2,
+          "title": "Create project folder structure and basic components",
+          "description": "Set up the project folder structure and implement basic UI components for the chat application",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create the following folder structure:\n   - `src/components/` - For React components\n   - `src/services/` - For API and WebSocket services\n   - `src/styles/` - For global styles and theme\n   - `src/utils/` - For utility functions\n   - `src/hooks/` - For custom React hooks\n   - `src/assets/` - For images and other static assets\n2. Create basic components:\n   - `src/components/Header.jsx` - Application header with logo and navigation\n   - `src/components/Layout.jsx` - Main layout wrapper component\n   - `src/components/ChatContainer.jsx` - Container for the chat interface\n   - `src/styles/GlobalStyles.js` - Global CSS using styled-components\n3. Create a basic theme file: `src/styles/theme.js`\n4. Update `App.jsx` to use the Layout component\n5. Test the components by rendering them with placeholder content and verifying they appear correctly in the browser",
+          "status": "done",
+          "parentTaskId": 1
+        },
+        {
+          "id": 3,
+          "title": "Implement chat interface UI and service skeleton",
+          "description": "Create the chat interface UI components and set up the service structure for handling streaming responses",
+          "dependencies": [
+            2
+          ],
+          "details": "1. Create chat interface components:\n   - `src/components/ChatInput.jsx` - Text input for user messages with send button\n   - `src/components/MessageList.jsx` - Component to display chat messages\n   - `src/components/Message.jsx` - Individual message component (user or AI)\n   - `src/components/TypingIndicator.jsx` - Animation for when AI is responding\n2. Set up service skeleton:\n   - `src/services/socketService.js` - Service for WebSocket connection setup\n   - `src/services/chatService.js` - Service for handling chat operations\n3. Create a custom hook: `src/hooks/useChatStream.js` for handling streaming responses\n4. Wire up the components in `ChatContainer.jsx`:\n   - Include MessageList and ChatInput\n   - Add basic state for messages\n   - Create placeholder functions for sending messages\n5. Add basic styling to all components using styled-components\n6. Test the UI by:\n   - Adding mock messages to the state\n   - Verifying messages display correctly\n   - Ensuring the input field works (captures text but doesn't need to send yet)\n   - Checking that the layout is responsive",
+          "status": "done",
+          "parentTaskId": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Implement Custom Chat Components",
+      "description": "Develop the core chat UI components including message list, input field, and send button.",
+      "status": "done",
+      "dependencies": [
+        1
+      ],
+      "priority": "high",
+      "details": "Create reusable React components for: 1) MessageList to display chat history, 2) MessageInput with text field and send button, 3) Message component to render individual messages with proper styling for user vs. agent messages, 4) Loading/thinking indicators. Style components using CSS modules or styled-components. Implement basic state management for the chat history and user input.",
+      "testStrategy": "Test components in isolation using React Testing Library. Verify responsive design works on different screen sizes. Manually test the UI flow and interaction patterns."
+    },
+    {
+      "id": 3,
+      "title": "Set up Express Backend Server",
+      "description": "Create a Node.js/Express server with a basic /chat endpoint structure.",
+      "status": "done",
+      "dependencies": [],
+      "priority": "high",
+      "details": "Initialize a Node.js project with Express. Set up the server structure with middleware for CORS, JSON parsing, and error handling. Create a /chat endpoint that accepts POST requests with a message field. Implement response streaming capability using Server-Sent Events (SSE). For initial testing, the endpoint should return a hardcoded response to verify connectivity.",
+      "testStrategy": "Use tools like Postman or curl to test the endpoint with various inputs. Verify that the server correctly handles requests and can stream responses. Test error handling by sending malformed requests.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Initialize Node.js project with Express and basic middleware",
+          "description": "Set up the project structure, install dependencies, and configure basic Express middleware for the server",
+          "dependencies": [],
+          "details": "1. Create a new directory for the project\n2. Initialize a new Node.js project with `npm init -y`\n3. Install required dependencies: `npm install express cors dotenv`\n4. Create a basic folder structure (src/, config/, etc.)\n5. Create a server.js file as the entry point\n6. Set up Express with basic middleware:\n   - CORS configuration\n   - JSON body parsing\n   - URL-encoded data parsing\n7. Implement basic error handling middleware\n8. Configure environment variables with dotenv\n9. Set up a basic server listening on a configurable port\n10. Test the server by running it and confirming it starts without errors\n\n<info added on 2025-07-06T20:05:14.631Z>\n## Additional Implementation Details\n\n### Server Configuration Code Example\n```javascript\n// index.js\nconst express = require('express');\nconst cors = require('cors');\nconst helmet = require('helmet');\nconst morgan = require('morgan');\nconst compression = require('compression');\nconst rateLimit = require('express-rate-limit');\nconst dotenv = require('dotenv');\n\ndotenv.config();\nconst app = express();\nconst PORT = process.env.PORT || 3001;\n\n// Rate limiting configuration\nconst limiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 minutes\n  max: 100, // 100 requests per window\n  standardHeaders: true,\n  legacyHeaders: false,\n});\n\n// Middleware setup\napp.use(helmet({\n  contentSecurityPolicy: {\n    directives: {\n      defaultSrc: [\"'self'\"],\n      scriptSrc: [\"'self'\", \"'unsafe-inline'\"],\n      connectSrc: [\"'self'\", \"localhost:*\"]\n    }\n  }\n}));\napp.use(limiter);\napp.use(cors({\n  origin: 'http://localhost:5173',\n  methods: ['GET', 'POST'],\n  allowedHeaders: ['Content-Type', 'Authorization']\n}));\napp.use(compression());\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\napp.use(morgan('dev'));\n```\n\n### API Routes Implementation\n```javascript\n// routes/api.js\nconst router = express.Router();\n\nrouter.get('/', (req, res) => {\n  res.json({\n    name: 'Chat Application API',\n    version: '1.0.0',\n    endpoints: {\n      '/api/chat': 'Send and receive chat messages',\n      '/health': 'Check API health status'\n    }\n  });\n});\n\n// Health check endpoint\nrouter.get('/health', (req, res) => {\n  res.json({\n    status: 'ok',\n    timestamp: new Date(),\n    uptime: process.uptime()\n  });\n});\n\nmodule.exports = router;\n```\n\n### Error Handling Implementation\n```javascript\n// Global error handler\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  \n  res.status(err.status || 500).json({\n    error: {\n      message: err.message || 'Internal Server Error',\n      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined\n    }\n  });\n});\n\n// 404 handler\napp.use((req, res) => {\n  res.status(404).json({\n    error: {\n      message: 'Route not found'\n    }\n  });\n});\n```\n\n### Package.json Scripts\n```json\n\"scripts\": {\n  \"start\": \"node index.js\",\n  \"dev\": \"nodemon index.js\",\n  \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n}\n```\n\n### Environment Variables (.env)\n```\nPORT=3001\nNODE_ENV=development\nCORS_ORIGIN=http://localhost:5173\nRATE_LIMIT_WINDOW_MS=900000\nRATE_LIMIT_MAX=100\n```\n</info added on 2025-07-06T20:05:14.631Z>",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 2,
+          "title": "Implement /chat endpoint with basic request handling",
+          "description": "Create a route handler for the /chat endpoint that accepts POST requests and validates incoming data",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create a routes directory with a chat.js file\n2. Set up a router for chat-related endpoints\n3. Implement a POST handler for the /chat endpoint\n4. Add request validation to ensure the message field is present\n5. Create a controller function that processes the chat request\n6. Implement error handling specific to the chat endpoint\n7. Return a hardcoded response for initial testing\n8. Register the chat router in the main Express app\n9. Test the endpoint using a tool like Postman or curl to verify it accepts requests and returns the hardcoded response\n10. Add basic logging for incoming requests\n\n<info added on 2025-07-06T20:07:22.692Z>\nHere's additional technical information to enhance the subtask:\n\n```javascript\n// Example implementation for chat.js router\nconst express = require('express');\nconst router = express.Router();\nconst { v4: uuidv4 } = require('uuid'); // Consider using UUID for message IDs\n\n// Middleware for request validation\nconst validateChatRequest = (req, res, next) => {\n  const { message } = req.body;\n  \n  if (!message || typeof message !== 'string' || message.trim() === '') {\n    return res.status(400).json({\n      error: 'Bad Request',\n      message: 'Message is required and must be a non-empty string'\n    });\n  }\n  \n  next();\n};\n\n// Controller function\nconst handleChatRequest = (req, res) => {\n  try {\n    const { message } = req.body;\n    const msgId = `msg_${Date.now()}`;\n    \n    // Log incoming request\n    console.log(`[CHAT] Request from ${req.ip}: \"${message.substring(0, 30)}${message.length > 30 ? '...' : ''}\"`);\n    \n    // Process message (placeholder for future AI integration)\n    const response = {\n      id: msgId,\n      message: `Thank you for your message: \"${message}\". The AI agent functionality will be implemented in the next tasks.`,\n      timestamp: new Date().toISOString(),\n      status: 'success'\n    };\n    \n    // Log successful response\n    console.log(`[CHAT] Response sent for ${msgId}`);\n    \n    return res.status(200).json(response);\n  } catch (error) {\n    console.error(`[CHAT] Error processing request: ${error.message}`);\n    return res.status(500).json({\n      error: 'Internal Server Error',\n      message: 'An unexpected error occurred while processing your request'\n    });\n  }\n};\n\n// Status endpoint for health checks\nrouter.get('/status', (req, res) => {\n  res.status(200).json({\n    status: 'operational',\n    timestamp: new Date().toISOString(),\n    features: {\n      basicChat: true,\n      streaming: false,\n      aiIntegration: false\n    }\n  });\n});\n\n// Chat endpoint\nrouter.post('/', validateChatRequest, handleChatRequest);\n\nmodule.exports = router;\n\n// In your main app.js:\n// app.use('/api/chat', require('./routes/chat'));\n```\n\nThis implementation includes:\n- Separate middleware for request validation\n- Proper error handling with descriptive messages\n- Message preview in logs to avoid logging large messages\n- UUID-based message IDs for tracking\n- Status endpoint with feature flags for monitoring\n- Request origin logging (IP address)\n- Structured JSON responses with consistent format\n</info added on 2025-07-06T20:07:22.692Z>",
+          "status": "done",
+          "parentTaskId": 3
+        },
+        {
+          "id": 3,
+          "title": "Implement Server-Sent Events (SSE) for response streaming",
+          "description": "Enhance the /chat endpoint to support streaming responses using Server-Sent Events",
+          "dependencies": [
+            2
+          ],
+          "details": "1. Modify the chat endpoint to set appropriate headers for SSE:\n   - `Content-Type: text/event-stream`\n   - `Cache-Control: no-cache`\n   - `Connection: keep-alive`\n2. Implement a streaming response mechanism in the controller\n3. Create a utility function to format SSE messages\n4. Modify the request handler to keep the connection open\n5. Implement a simple streaming response that sends the hardcoded message in chunks\n6. Add proper error handling for stream interruptions\n7. Ensure proper stream closure when the response is complete\n8. Test the streaming functionality using a browser or a client that supports SSE\n9. Verify that the client receives the streamed response correctly\n10. Add documentation comments explaining the SSE implementation\n\n<info added on 2025-07-06T20:09:51.147Z>\nHere's additional technical information for the SSE implementation:\n\n```javascript\n// SSE Utility Functions Implementation\nfunction formatSSEMessage(id, event, data) {\n  return `id: ${id}\\nevent: ${event}\\ndata: ${JSON.stringify(data)}\\n\\n`;\n}\n\nasync function streamMessageInChunks(res, messageId, fullMessage, chunkSize = 15, delayMs = 80) {\n  const totalChunks = Math.ceil(fullMessage.length / chunkSize);\n  \n  // Send start event\n  res.write(formatSSEMessage(messageId, 'start', {\n    id: messageId,\n    totalLength: fullMessage.length,\n    timestamp: new Date().toISOString()\n  }));\n  \n  // Stream chunks with progress tracking\n  for (let i = 0; i < totalChunks; i++) {\n    // Check if client disconnected\n    if (res.closed || res.writableEnded) {\n      console.log(`[CHAT-STREAM] Client disconnected during streaming of message ${messageId}`);\n      return false;\n    }\n    \n    const start = i * chunkSize;\n    const end = Math.min(start + chunkSize, fullMessage.length);\n    const chunk = fullMessage.substring(start, end);\n    const progress = Math.round((end / fullMessage.length) * 100);\n    \n    res.write(formatSSEMessage(messageId, 'chunk', {\n      id: messageId,\n      text: chunk,\n      progress,\n      timestamp: new Date().toISOString()\n    }));\n    \n    // Add artificial delay between chunks\n    await new Promise(resolve => setTimeout(resolve, delayMs));\n  }\n  \n  // Send end event\n  res.write(formatSSEMessage(messageId, 'end', {\n    id: messageId,\n    complete: true,\n    timestamp: new Date().toISOString()\n  }));\n  \n  return true;\n}\n```\n\n**Stream Endpoint Implementation:**\n```javascript\napp.post('/api/chat/stream', (req, res) => {\n  const messageId = `msg_${Date.now()}`;\n  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;\n  \n  console.log(`[CHAT-STREAM] Request from ${clientIp} (${req.get('user-agent')})`);\n  \n  // Set SSE headers\n  res.setHeader('Content-Type', 'text/event-stream');\n  res.setHeader('Cache-Control', 'no-cache');\n  res.setHeader('Connection', 'keep-alive');\n  res.setHeader('Access-Control-Allow-Origin', '*');\n  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');\n  \n  // Handle client disconnect\n  req.on('close', () => {\n    if (!res.writableEnded) {\n      console.log(`[CHAT-STREAM] Client disconnected before stream completed for ${messageId}`);\n      res.end();\n    }\n  });\n  \n  // Validate request\n  const { message } = req.body;\n  if (!message || message.trim() === '') {\n    const errorData = { error: 'Message cannot be empty', code: 'EMPTY_MESSAGE' };\n    res.write(formatSSEMessage(messageId, 'error', errorData));\n    return res.end();\n  }\n  \n  // Example response (to be replaced with actual AI response)\n  const mockResponse = \"Thank you for your message. This is a simulated streaming response demonstrating Server-Sent Events functionality. Each chunk of this message is being sent separately with a small delay to simulate real-time AI response generation. The client should be receiving these chunks progressively and displaying them as they arrive.\";\n  \n  // Stream the response\n  streamMessageInChunks(res, messageId, mockResponse)\n    .then(completed => {\n      if (completed) {\n        console.log(`[CHAT-STREAM] Successfully completed streaming message ${messageId}`);\n      }\n      res.end();\n    })\n    .catch(err => {\n      console.error(`[CHAT-STREAM] Error streaming message ${messageId}:`, err);\n      res.write(formatSSEMessage(messageId, 'error', {\n        error: 'Stream interrupted',\n        message: err.message\n      }));\n      res.end();\n    });\n});\n```\n\n**Client-Side Consumption Example:**\n```javascript\nconst eventSource = new EventSource('/api/chat/stream');\nlet fullText = '';\n\neventSource.addEventListener('start', (event) => {\n  const data = JSON.parse(event.data);\n  console.log(`Starting stream for message ${data.id}, length: ${data.totalLength}`);\n  fullText = '';\n});\n\neventSource.addEventListener('chunk', (event) => {\n  const data = JSON.parse(event.data);\n  fullText += data.text;\n  console.log(`Progress: ${data.progress}%`);\n  // Update UI with the accumulated text\n  document.getElementById('response').textContent = fullText;\n});\n\neventSource.addEventListener('end', (event) => {\n  const data = JSON.parse(event.data);\n  console.log(`Stream complete for message ${data.id}`);\n  eventSource.close();\n});\n\neventSource.addEventListener('error', (event) => {\n  const data = JSON.parse(event.data);\n  console.error(`Stream error: ${data.error}`);\n  eventSource.close();\n});\n```\n\n**Testing with curl:**\n```bash\ncurl -X POST http://localhost:3000/api/chat/stream \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"message\":\"Test message for streaming\"}' \\\n  -N\n```\n</info added on 2025-07-06T20:09:51.147Z>",
+          "status": "done",
+          "parentTaskId": 3
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Implement Planning Step with Gemini",
+      "description": "Integrate Google Gemini model to generate a research plan with sub-questions based on user input.",
+      "status": "done",
+      "dependencies": [
+        3
+      ],
+      "priority": "high",
+      "details": "Install LangChain.js v0.3 and @langchain/google-genai packages. Set up the Gemini model integration with proper API key configuration. Create a prompt template that instructs Gemini to generate approximately 3 targeted sub-questions based on the user's financial query. Implement a chain that takes the user's question as input and outputs a structured research plan. Handle API errors and rate limiting gracefully.",
+      "testStrategy": "Test with a variety of financial questions to ensure the planning step generates relevant sub-questions. Verify error handling works when API limits are reached or other failures occur. Log and review the generated plans for quality assessment.",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install Required Packages and Set Up Project Structure",
+          "description": "Install LangChain.js v0.3 and @langchain/google-genai packages, and set up the necessary project structure for Gemini integration.",
+          "dependencies": [],
+          "details": "Implementation steps:\n1. Run `npm install langchain@0.3.x @langchain/google-genai` to install the required packages\n2. Create a new directory structure for the Gemini integration (e.g., `/services/gemini/`)\n3. Set up a basic module export structure with placeholder functions for the planning step\n4. Create a simple test file to verify package installation and imports are working\n\nTesting approach:\n- Verify packages are correctly installed by checking package.json and node_modules\n- Create a simple test that imports the packages to ensure they load without errors\n- Run the test to confirm the project structure is correctly set up",
+          "status": "done",
+          "parentTaskId": 4
+        },
+        {
+          "id": 2,
+          "title": "Configure API Key and Establish Gemini Connection",
+          "description": "Set up environment variables for the Google Gemini API key and implement the basic connection to the Gemini model.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implementation steps:\n1. Create a .env file template with GOOGLE_API_KEY placeholder\n2. Implement environment variable loading using dotenv or similar\n3. Create a utility function to initialize the Gemini model with proper configuration:\n   - Set up error handling for missing API keys\n   - Configure model parameters (temperature, max tokens, etc.)\n   - Implement a basic connection test function\n4. Add proper error handling for API connection issues and rate limiting\n\nTesting approach:\n- Create a test that verifies the API key is correctly loaded from environment variables\n- Implement a simple connection test that confirms the Gemini client can be initialized\n- Test error handling by simulating missing API keys and connection failures\n- Document the expected environment variables in the README",
+          "status": "done",
+          "parentTaskId": 4
+        },
+        {
+          "id": 3,
+          "title": "Design and Implement Financial Planning Prompt Template",
+          "description": "Create a prompt template that instructs Gemini to generate targeted sub-questions for financial research based on user queries.",
+          "dependencies": [
+            2
+          ],
+          "details": "Implementation steps:\n1. Design a prompt template that:\n   - Explains the task to Gemini (generating financial sub-questions)\n   - Provides context about financial research and planning\n   - Includes instructions to generate approximately 3 targeted sub-questions\n   - Specifies the desired output format (JSON or structured text)\n2. Implement the prompt template using LangChain's PromptTemplate\n3. Create a function that takes a user question and returns the formatted prompt\n4. Add validation to ensure the user input is appropriate for financial planning\n\nTesting approach:\n- Test the prompt template with various sample financial questions\n- Verify that the generated sub-questions are relevant and diverse\n- Test edge cases (very short queries, very complex queries, non-financial queries)\n- Create unit tests that validate the prompt generation function",
+          "status": "done",
+          "parentTaskId": 4
+        },
+        {
+          "id": 4,
+          "title": "Integrate Planning Chain with Existing Chat Endpoint",
+          "description": "Create a complete chain that processes user input, generates a research plan with sub-questions, and integrates with the existing chat endpoint.",
+          "dependencies": [
+            3
+          ],
+          "details": "Implementation steps:\n1. Implement a LangChain chain that:\n   - Takes the user's financial question as input\n   - Uses the prompt template from subtask 3\n   - Calls the Gemini model to generate sub-questions\n   - Parses and structures the response into a research plan\n2. Add error handling for API failures, rate limiting, and malformed responses\n3. Integrate the planning chain with the existing chat endpoint:\n   - Update the API route to call the planning function\n   - Structure the response to include both the original question and sub-questions\n   - Ensure proper error messages are returned to the client\n4. Implement caching for similar questions to reduce API calls\n\nTesting approach:\n- Create unit tests for the planning chain with mock responses\n- Test the integrated endpoint with real API calls using sample questions\n- Verify error handling by simulating various failure scenarios\n- Test performance with repeated similar questions to verify caching\n- Create end-to-end tests that verify the complete flow from user input to structured plan output",
+          "status": "done",
+          "parentTaskId": 4
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Implement Searching Step with Perplexity and Firecrawl",
+      "description": "Integrate Perplexity AI and Firecrawl to execute searches based on the generated sub-questions.",
+      "status": "pending",
+      "dependencies": [
+        4
+      ],
+      "priority": "high",
+      "details": "Set up LangChain integration for Perplexity AI using ChatPerplexity. Implement the Firecrawl client/SDK for targeted web data extraction. Create a parallel execution flow that takes the sub-questions from the planning step and queries both tools simultaneously. Collect and structure the search results from both sources. Implement proper error handling and fallbacks if either tool fails.",
+      "testStrategy": "Test each tool integration separately with sample queries. Verify parallel execution works correctly and handles timing differences. Check that the combined results are properly structured for the next step. Test error scenarios where one or both tools fail."
+    },
+    {
+      "id": 6,
+      "title": "Implement Answering Step with Final LLM",
+      "description": "Integrate Claude or Gemini to synthesize search results and generate final answers with citations.",
+      "status": "pending",
+      "dependencies": [
+        5
+      ],
+      "priority": "medium",
+      "details": "Set up integration with either Claude (via Anthropic SDK) or Gemini (via @langchain/google-genai). Create a comprehensive prompt template that instructs the LLM to synthesize the search results, provide accurate financial information, and include proper citations to sources. Implement streaming of the LLM response. Ensure the final answer format is consistent and includes clear attribution to sources from Perplexity and Firecrawl.",
+      "testStrategy": "Test with various combinations of search results to ensure the LLM generates coherent, accurate answers. Verify citations are properly included. Check that streaming works correctly. Review answers for quality, accuracy, and adherence to financial information standards."
+    },
+    {
+      "id": 7,
+      "title": "Connect Full Backend Chain",
+      "description": "Integrate all three steps (Plan, Search, Answer) into a complete end-to-end chain in the backend.",
+      "status": "pending",
+      "dependencies": [
+        4,
+        5,
+        6
+      ],
+      "priority": "medium",
+      "details": "Create a LangChain sequential chain that connects the planning, searching, and answering steps. Implement proper state management to pass data between steps. Add logging at each step for debugging and monitoring. Implement comprehensive error handling for the entire chain. Connect the complete chain to the /chat endpoint, ensuring the response is properly streamed back to the client.",
+      "testStrategy": "Test the full chain with various financial questions. Verify each step executes correctly and passes data to the next step. Test error scenarios at each step to ensure graceful degradation. Monitor performance and response times."
+    },
+    {
+      "id": 8,
+      "title": "Connect Frontend to Backend",
+      "description": "Integrate the React frontend with the Express backend to enable end-to-end functionality.",
+      "status": "pending",
+      "dependencies": [
+        2,
+        7
+      ],
+      "priority": "medium",
+      "details": "Create an API service in the React app to communicate with the backend. Implement the connection to the /chat endpoint using fetch or axios. Set up handling for the streaming response using EventSource or a similar approach. Update the UI state based on the streaming response. Add loading indicators to show when the agent is thinking/processing. Implement error handling for network issues or backend failures.",
+      "testStrategy": "Test the complete flow from user input to displayed response. Verify streaming works correctly and updates the UI in real-time. Test network error scenarios and ensure appropriate error messages are displayed to users."
+    },
+    {
+      "id": 9,
+      "title": "Implement Process Transparency Features",
+      "description": "Enhance the UI to show the agent's thinking process, including displaying sub-questions being researched.",
+      "status": "pending",
+      "dependencies": [
+        8
+      ],
+      "priority": "low",
+      "details": "Modify the backend to include intermediate steps (planning and searching) in the streamed response. Update the frontend to parse and display these intermediate steps in the chat interface. Create UI components to visually distinguish between different types of messages (user input, planning steps, search results, final answer). Add animations or visual indicators to show the progression through the agent's thinking process.",
+      "testStrategy": "Test that intermediate steps are correctly displayed in the UI. Verify the visual distinction between different message types. Get user feedback on the clarity and usefulness of the transparency features."
+    },
+    {
+      "id": 10,
+      "title": "Implement Error Handling and Monitoring",
+      "description": "Add comprehensive error handling, logging, and monitoring to ensure reliability and track API usage.",
+      "status": "pending",
+      "dependencies": [
+        7,
+        8
+      ],
+      "priority": "low",
+      "details": "Implement detailed error handling for all API calls and chain steps. Add a logging system to track errors, API usage, and performance metrics. Create a simple dashboard or logging endpoint to monitor API costs and rate limits. Implement graceful fallbacks for when specific tools or models are unavailable. Add user-friendly error messages for different failure scenarios. Consider implementing a simple caching mechanism for repeated queries to reduce API costs.",
+      "testStrategy": "Test various failure scenarios to ensure proper error handling. Verify logs contain sufficient information for debugging and monitoring. Check that API usage tracking works correctly. Test the caching mechanism if implemented."
+    }
+  ],
+  "metadata": {
+    "projectName": "Financial Agent Demo",
+    "totalTasks": 10,
+    "sourceFile": "scripts/PRD.txt",
+    "generatedAt": "2023-12-15"
+  }
+}

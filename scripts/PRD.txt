@@ -1,0 +1,73 @@
+# Overview
+This document outlines the requirements for the "Financial Agent Demo," a web-based chat application designed to answer users' financial questions. The agent provides well-researched, accurate, and cited answers by leveraging multiple modern AI models and data-sourcing tools. It is intended for users seeking reliable financial information and serves as a powerful demonstration of a multi-step, agentic AI architecture.
+
+# Core Features
+1.  **Conversational Chat Interface:**
+    -   **What it does:** Provides a clean, responsive, and user-friendly chat interface for users to interact with the agent.
+    -   **Why it's important:** A high-quality user experience is crucial for user engagement and for effectively demonstrating the agent's capabilities.
+    -   **How it works:** The frontend will be built using a simple React app with custom chat components including a message list, input field, and send button.
+
+2.  **Multi-Step Agentic Brain:**
+    -   **What it does:** Implements a three-step process to generate comprehensive and reliable answers.
+    -   **Why it's important:** This structured process ensures that answers are not just generated from a single model's knowledge but are based on a planned approach and real-time data, leading to higher quality and trustworthiness.
+    -   **How it works:** The backend, built with LangChain.js, orchestrates the flow:
+        1.  **Planning Step:** When a user asks a question, the agent first calls the Google Gemini model to generate a research plan consisting of approximately 3 targeted sub-questions.
+        2.  **Searching Step:** The agent then executes this plan by using the sub-questions to query two data sources in parallel: Perplexity AI (via `ChatPerplexity`) for broad, AI-powered search, and Firecrawl for targeted data extraction from specific web pages.
+        3.  **Answering Step:** All the gathered context from the searching step is synthesized by a final LLM (Claude or Gemini). This model constructs a final, coherent answer, complete with citations pointing to the sources of information.
+
+# User Experience
+-   **User Persona:** A retail investor, financial analyst, or student who needs quick, reliable answers to financial queries, ranging from "What is the P/E ratio of Apple?" to "Explain the impact of interest rate hikes on tech stocks."
+-   **Key User Flow:**
+    1.  The user visits the web application and is presented with a clean chat interface.
+    2.  The user types a financial question and hits send.
+    3.  The UI indicates that the agent is "thinking" or "planning," providing transparency into the process.
+    4.  The agent might display the sub-questions it's researching.
+    5.  The final, well-structured answer appears in the chat, with clear citations (e.g., footnotes or links) to the sources (Perplexity, Firecrawl results).
+-   **UI/UX Considerations:** The interface should be clean and modern with a simple chat layout. The streaming of the final answer is critical for a good user experience.
+
+# Technical Architecture
+-   **Frontend:** A simple React app with custom chat components built from scratch.
+-   **Backend:** A standalone Node.js/Express server will host the agent logic. LangChain.js (v0.3) will be the core framework for building and orchestrating the agent.
+-   **LLM Integrations:**
+    -   **Google Gemini for Planning:** We will use the `@langchain/google-genai` package, as detailed in the LangChain JS documentation, to integrate with a Gemini model for the planning step.
+    -   **Perplexity for Searching:** We will use a LangChain integration for Perplexity AI to execute searches.
+    -   **Final Answering LLM:** The final step will use either Claude (via the Anthropic SDK) or Gemini (again, via `@langchain/google-genai`) to synthesize the context and generate the answer.
+-   **Tool Integrations:**
+    -   **Firecrawl:** A dedicated client/SDK will be used to fetch and parse data from web sources.
+-   **API Design:** A single `/chat` endpoint on the Express server will handle the `POST` requests from the frontend. This endpoint will manage the entire three-step agentic chain and stream the final response back to the client.
+
+# Development Roadmap
+-   **MVP Requirements:**
+    1.  A functional React application with a custom chat interface.
+    2.  A backend Express server endpoint that successfully implements the three-step (Plan, Search, Answer) chain.
+    3.  Successful integration of Gemini for planning.
+    4.  Successful integration of both Perplexity and Firecrawl for searching.
+    5.  Successful integration of Claude or Gemini for answering with citations.
+    6.  The frontend is connected to the backend and can stream the final answer.
+-   **Future Enhancements:**
+    -   User authentication and chat history.
+    -   Adding more tools to the agent (e.g., a tool for real-time stock price checking).
+    -   Allowing the user to select which models or tools to use.
+    -   Displaying intermediate agent steps (plans, search results) in the UI for more transparency.
+
+# Logical Dependency Chain
+1.  Initialize the React project and create basic chat components for the frontend structure.
+2.  Set up the Express backend server with a basic `/chat` endpoint that can receive a request and send a hardcoded response.
+3.  Implement the **Planning Step**: Integrate Gemini and create the logic to generate sub-questions.
+4.  Implement the **Searching Step**: Integrate the LangChain Perplexity model and the Firecrawl client. Wire them up to the planning step's output.
+5.  Implement the **Answering Step**: Integrate the final LLM (Claude/Gemini) and create the prompt/chain to synthesize the context and generate the final answer with citations.
+6.  Connect the full end-to-end backend chain.
+7.  Connect the React frontend to the backend endpoint and ensure the streaming response is displayed correctly.
+
+# Risks and Mitigations
+-   **API Costs & Rate Limits:** Using multiple paid LLM APIs can be expensive and subject to rate limiting.
+    -   **Mitigation:** We will monitor usage closely from the start. For development, we'll rely on free tiers where possible and implement caching for repeated queries.
+-   **Data Quality:** The quality of data from Perplexity and Firecrawl can vary.
+    -   **Mitigation:** The final "Answering" step needs a robust prompt that instructs the LLM to identify and handle conflicting or low-quality information gracefully.
+-   **Complex Agent Logic:** Orchestrating the three steps and managing the state can be complex.
+    -   **Mitigation:** We will use LangChain.js extensively to manage chain and agent complexity, keeping the logic as modular as possible.
+-   **Tool Failures:** Any of the external API calls (Gemini, Perplexity, Firecrawl) could fail.
+    -   **Mitigation:** The agent logic must include error handling (e.g., try-catch blocks, retries) for each tool execution.
+
+# Appendix
+-   This project will be managed using the `task-master-ai` tool to break down the development process into clear, actionable tasks based on this PRD. 

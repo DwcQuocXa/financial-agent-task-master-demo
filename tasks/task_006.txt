@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Implement Answering Step with Final LLM
+# Status: done
+# Dependencies: 5
+# Priority: medium
+# Description: Integrate Claude or Gemini to synthesize search results and generate final answers with citations.
+# Details:
+Set up integration with either Claude (via Anthropic SDK) or Gemini (via @langchain/google-genai). Create a comprehensive prompt template that instructs the LLM to synthesize the search results, provide accurate financial information, and include proper citations to sources. Implement streaming of the LLM response. Ensure the final answer format is consistent and includes clear attribution to sources from Perplexity and Firecrawl.
+
+# Test Strategy:
+Test with various combinations of search results to ensure the LLM generates coherent, accurate answers. Verify citations are properly included. Check that streaming works correctly. Review answers for quality, accuracy, and adherence to financial information standards.

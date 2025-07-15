@@ -1,0 +1,91 @@
+# Task ID: 5
+# Title: Implement Searching Step with Perplexity and Firecrawl
+# Status: done
+# Dependencies: 4
+# Priority: high
+# Description: Integrate Perplexity AI and Firecrawl to execute searches based on the generated sub-questions.
+# Details:
+Set up LangChain integration for Perplexity AI using ChatPerplexity. Implement the Firecrawl client/SDK for targeted web data extraction. Create a parallel execution flow that takes the sub-questions from the planning step and queries both tools simultaneously. Collect and structure the search results from both sources. Implement proper error handling and fallbacks if either tool fails.
+
+# Test Strategy:
+Test each tool integration separately with sample queries. Verify parallel execution works correctly and handles timing differences. Check that the combined results are properly structured for the next step. Test error scenarios where one or both tools fail.
+
+# Subtasks:
+## 1. Set up LangChain integration with Perplexity AI [done]
+### Dependencies: None
+### Description: Implement the integration with Perplexity AI using ChatPerplexity through LangChain to enable search functionality based on sub-questions.
+### Details:
+Implementation steps:
+1. Install required packages: `langchain` and any Perplexity-specific packages
+2. Create a PerplexitySearchClient class that initializes the ChatPerplexity client with appropriate API keys
+3. Implement a search method that takes a sub-question as input and returns structured search results
+4. Add proper error handling with retries and timeouts
+5. Create a simple caching mechanism to avoid duplicate requests
+6. Write unit tests using mock responses to verify the integration works correctly
+7. Document the API and usage patterns
+
+Testing approach:
+- Test with mock API responses
+- Test error handling with simulated failures
+- Verify the structure of returned data matches expectations
+
+## 2. Implement Firecrawl client for web data extraction [done]
+### Dependencies: None
+### Description: Set up the Firecrawl SDK/client to enable targeted web data extraction as an alternative or complementary search method.
+### Details:
+Implementation steps:
+1. Install the Firecrawl SDK/client and any dependencies
+2. Create a FirecrawlClient class that handles authentication and initialization
+3. Implement a crawl method that takes a sub-question and any targeting parameters
+4. Add functionality to extract and structure the relevant data from crawl results
+5. Implement rate limiting and respect robots.txt
+6. Add error handling with appropriate fallbacks
+7. Create a results parser that converts raw crawl data into a consistent format
+
+Testing approach:
+- Test with sample web pages and verify extraction accuracy
+- Test error scenarios and recovery mechanisms
+- Verify the client respects rate limits and robots.txt
+- Test the structure of returned data for consistency
+
+## 3. Create parallel execution flow for search operations [done]
+### Dependencies: 5.1, 5.2
+### Description: Implement a system to execute searches in parallel across both Perplexity and Firecrawl, managing concurrent requests efficiently.
+### Details:
+Implementation steps:
+1. Create a SearchOrchestrator class that takes sub-questions as input
+2. Implement asynchronous execution using async/await or threading based on the language/framework
+3. Set up a queue system for managing multiple sub-questions
+4. Implement timeout handling to prevent long-running searches
+5. Add progress tracking and status reporting
+6. Create a mechanism to cancel ongoing searches if needed
+7. Implement resource management to prevent overloading systems
+
+Testing approach:
+- Test parallel execution with multiple sub-questions
+- Verify timeout mechanisms work correctly
+- Test cancellation functionality
+- Measure performance and optimize as needed
+- Test with simulated slow responses to ensure robustness
+
+## 4. Implement results collection and structured output [done]
+### Dependencies: 5.3
+### Description: Create a system to collect, merge, and structure search results from both Perplexity and Firecrawl into a unified format for downstream processing.
+### Details:
+Implementation steps:
+1. Define a consistent output schema for search results
+2. Implement result collectors for each search source (Perplexity and Firecrawl)
+3. Create a ResultsMerger class that combines and deduplicates results
+4. Add relevance scoring to prioritize more relevant information
+5. Implement filtering to remove low-quality or irrelevant results
+6. Create a citation/source tracking system to maintain provenance
+7. Add serialization/deserialization for storing results
+8. Implement fallback logic if one search source fails
+
+Testing approach:
+- Test with various result combinations to ensure proper merging
+- Verify deduplication works correctly
+- Test fallback scenarios when one source fails
+- Validate the structure matches the expected schema
+- Test with edge cases like empty results or malformed data
+

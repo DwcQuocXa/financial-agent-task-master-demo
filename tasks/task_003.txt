@@ -1,0 +1,416 @@
+# Task ID: 3
+# Title: Set up Express Backend Server
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Create a Node.js/Express server with a basic /chat endpoint structure.
+# Details:
+Initialize a Node.js project with Express. Set up the server structure with middleware for CORS, JSON parsing, and error handling. Create a /chat endpoint that accepts POST requests with a message field. Implement response streaming capability using Server-Sent Events (SSE). For initial testing, the endpoint should return a hardcoded response to verify connectivity.
+
+# Test Strategy:
+Use tools like Postman or curl to test the endpoint with various inputs. Verify that the server correctly handles requests and can stream responses. Test error handling by sending malformed requests.
+
+# Subtasks:
+## 1. Initialize Node.js project with Express and basic middleware [done]
+### Dependencies: None
+### Description: Set up the project structure, install dependencies, and configure basic Express middleware for the server
+### Details:
+1. Create a new directory for the project
+2. Initialize a new Node.js project with `npm init -y`
+3. Install required dependencies: `npm install express cors dotenv`
+4. Create a basic folder structure (src/, config/, etc.)
+5. Create a server.js file as the entry point
+6. Set up Express with basic middleware:
+   - CORS configuration
+   - JSON body parsing
+   - URL-encoded data parsing
+7. Implement basic error handling middleware
+8. Configure environment variables with dotenv
+9. Set up a basic server listening on a configurable port
+10. Test the server by running it and confirming it starts without errors
+
+<info added on 2025-07-06T20:05:14.631Z>
+## Additional Implementation Details
+
+### Server Configuration Code Example
+```javascript
+// index.js
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const dotenv = require('dotenv');
+
+dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Rate limiting configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Middleware setup
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      connectSrc: ["'self'", "localhost:*"]
+    }
+  }
+}));
+app.use(limiter);
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(compression());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+```
+
+### API Routes Implementation
+```javascript
+// routes/api.js
+const router = express.Router();
+
+router.get('/', (req, res) => {
+  res.json({
+    name: 'Chat Application API',
+    version: '1.0.0',
+    endpoints: {
+      '/api/chat': 'Send and receive chat messages',
+      '/health': 'Check API health status'
+    }
+  });
+});
+
+// Health check endpoint
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date(),
+    uptime: process.uptime()
+  });
+});
+
+module.exports = router;
+```
+
+### Error Handling Implementation
+```javascript
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message || 'Internal Server Error',
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    }
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    error: {
+      message: 'Route not found'
+    }
+  });
+});
+```
+
+### Package.json Scripts
+```json
+"scripts": {
+  "start": "node index.js",
+  "dev": "nodemon index.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
+}
+```
+
+### Environment Variables (.env)
+```
+PORT=3001
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=100
+```
+</info added on 2025-07-06T20:05:14.631Z>
+
+## 2. Implement /chat endpoint with basic request handling [done]
+### Dependencies: 3.1
+### Description: Create a route handler for the /chat endpoint that accepts POST requests and validates incoming data
+### Details:
+1. Create a routes directory with a chat.js file
+2. Set up a router for chat-related endpoints
+3. Implement a POST handler for the /chat endpoint
+4. Add request validation to ensure the message field is present
+5. Create a controller function that processes the chat request
+6. Implement error handling specific to the chat endpoint
+7. Return a hardcoded response for initial testing
+8. Register the chat router in the main Express app
+9. Test the endpoint using a tool like Postman or curl to verify it accepts requests and returns the hardcoded response
+10. Add basic logging for incoming requests
+
+<info added on 2025-07-06T20:07:22.692Z>
+Here's additional technical information to enhance the subtask:
+
+```javascript
+// Example implementation for chat.js router
+const express = require('express');
+const router = express.Router();
+const { v4: uuidv4 } = require('uuid'); // Consider using UUID for message IDs
+
+// Middleware for request validation
+const validateChatRequest = (req, res, next) => {
+  const { message } = req.body;
+  
+  if (!message || typeof message !== 'string' || message.trim() === '') {
+    return res.status(400).json({
+      error: 'Bad Request',
+      message: 'Message is required and must be a non-empty string'
+    });
+  }
+  
+  next();
+};
+
+// Controller function
+const handleChatRequest = (req, res) => {
+  try {
+    const { message } = req.body;
+    const msgId = `msg_${Date.now()}`;
+    
+    // Log incoming request
+    console.log(`[CHAT] Request from ${req.ip}: "${message.substring(0, 30)}${message.length > 30 ? '...' : ''}"`);
+    
+    // Process message (placeholder for future AI integration)
+    const response = {
+      id: msgId,
+      message: `Thank you for your message: "${message}". The AI agent functionality will be implemented in the next tasks.`,
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    };
+    
+    // Log successful response
+    console.log(`[CHAT] Response sent for ${msgId}`);
+    
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error(`[CHAT] Error processing request: ${error.message}`);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'An unexpected error occurred while processing your request'
+    });
+  }
+};
+
+// Status endpoint for health checks
+router.get('/status', (req, res) => {
+  res.status(200).json({
+    status: 'operational',
+    timestamp: new Date().toISOString(),
+    features: {
+      basicChat: true,
+      streaming: false,
+      aiIntegration: false
+    }
+  });
+});
+
+// Chat endpoint
+router.post('/', validateChatRequest, handleChatRequest);
+
+module.exports = router;
+
+// In your main app.js:
+// app.use('/api/chat', require('./routes/chat'));
+```
+
+This implementation includes:
+- Separate middleware for request validation
+- Proper error handling with descriptive messages
+- Message preview in logs to avoid logging large messages
+- UUID-based message IDs for tracking
+- Status endpoint with feature flags for monitoring
+- Request origin logging (IP address)
+- Structured JSON responses with consistent format
+</info added on 2025-07-06T20:07:22.692Z>
+
+## 3. Implement Server-Sent Events (SSE) for response streaming [done]
+### Dependencies: 3.2
+### Description: Enhance the /chat endpoint to support streaming responses using Server-Sent Events
+### Details:
+1. Modify the chat endpoint to set appropriate headers for SSE:
+   - `Content-Type: text/event-stream`
+   - `Cache-Control: no-cache`
+   - `Connection: keep-alive`
+2. Implement a streaming response mechanism in the controller
+3. Create a utility function to format SSE messages
+4. Modify the request handler to keep the connection open
+5. Implement a simple streaming response that sends the hardcoded message in chunks
+6. Add proper error handling for stream interruptions
+7. Ensure proper stream closure when the response is complete
+8. Test the streaming functionality using a browser or a client that supports SSE
+9. Verify that the client receives the streamed response correctly
+10. Add documentation comments explaining the SSE implementation
+
+<info added on 2025-07-06T20:09:51.147Z>
+Here's additional technical information for the SSE implementation:
+
+```javascript
+// SSE Utility Functions Implementation
+function formatSSEMessage(id, event, data) {
+  return `id: ${id}\nevent: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+}
+
+async function streamMessageInChunks(res, messageId, fullMessage, chunkSize = 15, delayMs = 80) {
+  const totalChunks = Math.ceil(fullMessage.length / chunkSize);
+  
+  // Send start event
+  res.write(formatSSEMessage(messageId, 'start', {
+    id: messageId,
+    totalLength: fullMessage.length,
+    timestamp: new Date().toISOString()
+  }));
+  
+  // Stream chunks with progress tracking
+  for (let i = 0; i < totalChunks; i++) {
+    // Check if client disconnected
+    if (res.closed || res.writableEnded) {
+      console.log(`[CHAT-STREAM] Client disconnected during streaming of message ${messageId}`);
+      return false;
+    }
+    
+    const start = i * chunkSize;
+    const end = Math.min(start + chunkSize, fullMessage.length);
+    const chunk = fullMessage.substring(start, end);
+    const progress = Math.round((end / fullMessage.length) * 100);
+    
+    res.write(formatSSEMessage(messageId, 'chunk', {
+      id: messageId,
+      text: chunk,
+      progress,
+      timestamp: new Date().toISOString()
+    }));
+    
+    // Add artificial delay between chunks
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+  }
+  
+  // Send end event
+  res.write(formatSSEMessage(messageId, 'end', {
+    id: messageId,
+    complete: true,
+    timestamp: new Date().toISOString()
+  }));
+  
+  return true;
+}
+```
+
+**Stream Endpoint Implementation:**
+```javascript
+app.post('/api/chat/stream', (req, res) => {
+  const messageId = `msg_${Date.now()}`;
+  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  
+  console.log(`[CHAT-STREAM] Request from ${clientIp} (${req.get('user-agent')})`);
+  
+  // Set SSE headers
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle client disconnect
+  req.on('close', () => {
+    if (!res.writableEnded) {
+      console.log(`[CHAT-STREAM] Client disconnected before stream completed for ${messageId}`);
+      res.end();
+    }
+  });
+  
+  // Validate request
+  const { message } = req.body;
+  if (!message || message.trim() === '') {
+    const errorData = { error: 'Message cannot be empty', code: 'EMPTY_MESSAGE' };
+    res.write(formatSSEMessage(messageId, 'error', errorData));
+    return res.end();
+  }
+  
+  // Example response (to be replaced with actual AI response)
+  const mockResponse = "Thank you for your message. This is a simulated streaming response demonstrating Server-Sent Events functionality. Each chunk of this message is being sent separately with a small delay to simulate real-time AI response generation. The client should be receiving these chunks progressively and displaying them as they arrive.";
+  
+  // Stream the response
+  streamMessageInChunks(res, messageId, mockResponse)
+    .then(completed => {
+      if (completed) {
+        console.log(`[CHAT-STREAM] Successfully completed streaming message ${messageId}`);
+      }
+      res.end();
+    })
+    .catch(err => {
+      console.error(`[CHAT-STREAM] Error streaming message ${messageId}:`, err);
+      res.write(formatSSEMessage(messageId, 'error', {
+        error: 'Stream interrupted',
+        message: err.message
+      }));
+      res.end();
+    });
+});
+```
+
+**Client-Side Consumption Example:**
+```javascript
+const eventSource = new EventSource('/api/chat/stream');
+let fullText = '';
+
+eventSource.addEventListener('start', (event) => {
+  const data = JSON.parse(event.data);
+  console.log(`Starting stream for message ${data.id}, length: ${data.totalLength}`);
+  fullText = '';
+});
+
+eventSource.addEventListener('chunk', (event) => {
+  const data = JSON.parse(event.data);
+  fullText += data.text;
+  console.log(`Progress: ${data.progress}%`);
+  // Update UI with the accumulated text
+  document.getElementById('response').textContent = fullText;
+});
+
+eventSource.addEventListener('end', (event) => {
+  const data = JSON.parse(event.data);
+  console.log(`Stream complete for message ${data.id}`);
+  eventSource.close();
+});
+
+eventSource.addEventListener('error', (event) => {
+  const data = JSON.parse(event.data);
+  console.error(`Stream error: ${data.error}`);
+  eventSource.close();
+});
+```
+
+**Testing with curl:**
+```bash
+curl -X POST http://localhost:3000/api/chat/stream \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Test message for streaming"}' \
+  -N
+```
+</info added on 2025-07-06T20:09:51.147Z>
+

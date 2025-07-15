@@ -1,0 +1,33 @@
+{
+  "name": "financial-agent-demo",
+  "version": "1.0.0",
+  "description": "This document outlines the requirements for the \"Financial Agent Demo,\" a web-based chat application designed to answer users' financial questions. The agent provides well-researched, accurate, and cited answers by leveraging multiple modern AI models and data-sourcing tools. It is intended for users seeking reliable financial information and serves as a powerful demonstration of a multi-step, agentic AI architecture",
+  "author": "Dwc Ngo",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "list": "node scripts/dev.js list",
+    "generate": "node scripts/dev.js generate",
+    "parse-prd": "node scripts/dev.js parse-prd"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "boxen": "^8.0.1",
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "cli-table3": "^0.6.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "fastmcp": "^1.20.5",
+    "figlet": "^1.8.0",
+    "fuse.js": "^7.0.0",
+    "gradient-string": "^3.0.0",
+    "helmet": "^8.1.0",
+    "inquirer": "^12.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "lru-cache": "^10.2.0",
+    "openai": "^4.89.0",
+    "ora": "^8.2.0"
+  }
+}

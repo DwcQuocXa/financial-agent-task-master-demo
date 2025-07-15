@@ -1,0 +1,91 @@
+# Task ID: 4
+# Title: Implement Planning Step with Gemini
+# Status: done
+# Dependencies: 3
+# Priority: high
+# Description: Integrate Google Gemini model to generate a research plan with sub-questions based on user input.
+# Details:
+Install LangChain.js v0.3 and @langchain/google-genai packages. Set up the Gemini model integration with proper API key configuration. Create a prompt template that instructs Gemini to generate approximately 3 targeted sub-questions based on the user's financial query. Implement a chain that takes the user's question as input and outputs a structured research plan. Handle API errors and rate limiting gracefully.
+
+# Test Strategy:
+Test with a variety of financial questions to ensure the planning step generates relevant sub-questions. Verify error handling works when API limits are reached or other failures occur. Log and review the generated plans for quality assessment.
+
+# Subtasks:
+## 1. Install Required Packages and Set Up Project Structure [done]
+### Dependencies: None
+### Description: Install LangChain.js v0.3 and @langchain/google-genai packages, and set up the necessary project structure for Gemini integration.
+### Details:
+Implementation steps:
+1. Run `npm install langchain@0.3.x @langchain/google-genai` to install the required packages
+2. Create a new directory structure for the Gemini integration (e.g., `/services/gemini/`)
+3. Set up a basic module export structure with placeholder functions for the planning step
+4. Create a simple test file to verify package installation and imports are working
+
+Testing approach:
+- Verify packages are correctly installed by checking package.json and node_modules
+- Create a simple test that imports the packages to ensure they load without errors
+- Run the test to confirm the project structure is correctly set up
+
+## 2. Configure API Key and Establish Gemini Connection [done]
+### Dependencies: 4.1
+### Description: Set up environment variables for the Google Gemini API key and implement the basic connection to the Gemini model.
+### Details:
+Implementation steps:
+1. Create a .env file template with GOOGLE_API_KEY placeholder
+2. Implement environment variable loading using dotenv or similar
+3. Create a utility function to initialize the Gemini model with proper configuration:
+   - Set up error handling for missing API keys
+   - Configure model parameters (temperature, max tokens, etc.)
+   - Implement a basic connection test function
+4. Add proper error handling for API connection issues and rate limiting
+
+Testing approach:
+- Create a test that verifies the API key is correctly loaded from environment variables
+- Implement a simple connection test that confirms the Gemini client can be initialized
+- Test error handling by simulating missing API keys and connection failures
+- Document the expected environment variables in the README
+
+## 3. Design and Implement Financial Planning Prompt Template [done]
+### Dependencies: 4.2
+### Description: Create a prompt template that instructs Gemini to generate targeted sub-questions for financial research based on user queries.
+### Details:
+Implementation steps:
+1. Design a prompt template that:
+   - Explains the task to Gemini (generating financial sub-questions)
+   - Provides context about financial research and planning
+   - Includes instructions to generate approximately 3 targeted sub-questions
+   - Specifies the desired output format (JSON or structured text)
+2. Implement the prompt template using LangChain's PromptTemplate
+3. Create a function that takes a user question and returns the formatted prompt
+4. Add validation to ensure the user input is appropriate for financial planning
+
+Testing approach:
+- Test the prompt template with various sample financial questions
+- Verify that the generated sub-questions are relevant and diverse
+- Test edge cases (very short queries, very complex queries, non-financial queries)
+- Create unit tests that validate the prompt generation function
+
+## 4. Integrate Planning Chain with Existing Chat Endpoint [done]
+### Dependencies: 4.3
+### Description: Create a complete chain that processes user input, generates a research plan with sub-questions, and integrates with the existing chat endpoint.
+### Details:
+Implementation steps:
+1. Implement a LangChain chain that:
+   - Takes the user's financial question as input
+   - Uses the prompt template from subtask 3
+   - Calls the Gemini model to generate sub-questions
+   - Parses and structures the response into a research plan
+2. Add error handling for API failures, rate limiting, and malformed responses
+3. Integrate the planning chain with the existing chat endpoint:
+   - Update the API route to call the planning function
+   - Structure the response to include both the original question and sub-questions
+   - Ensure proper error messages are returned to the client
+4. Implement caching for similar questions to reduce API calls
+
+Testing approach:
+- Create unit tests for the planning chain with mock responses
+- Test the integrated endpoint with real API calls using sample questions
+- Verify error handling by simulating various failure scenarios
+- Test performance with repeated similar questions to verify caching
+- Create end-to-end tests that verify the complete flow from user input to structured plan output
+
